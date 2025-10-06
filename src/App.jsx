@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import CoinCard from "./components/CoinCard";
 import LimitSelector from "./components/LimitSelector";
+import FilterInput from "./components/FilterInput";
 
 // Base URL of the CoinGecko API endpoint we're using
 // This specific endpoint returns data for multiple coins (prices, market cap, etc.)
@@ -30,7 +31,17 @@ const App = () => {
   // Helps show a user-friendly error instead of breaking the app
   const [error, setError] = useState(null);
 
+  // Store how many coins should be displayed on the page
+  // Default value is 10 (so the app starts by showing 10 coins)
+  // "limit" holds the current value
+  // "setLimit" is the function used to update it when the user changes the dropdown
   const [limit, setLimit] = useState(10);
+
+  // Store the current text entered by the user in the filter input
+  // Default value is an empty string (no filter applied)
+  // "filter" holds the current text
+  // "setFilter" updates it whenever the user types in the input box
+  const [filter, setFilter] = useState("");
 
   // ------------------------ FETCH DATA -------------------------------------------------
 
@@ -73,32 +84,59 @@ const App = () => {
     fetchCoins();
   }, [limit]); // ← Empty dependency array = run only once when component mounts
 
+  // ------------------------ FILTER DATA -------------------------------------------------
+
+  // Create a new array that only includes coins matching the user's search
+  // We check if the filter text appears in the coin's name OR symbol
+  // - .toLowerCase() makes the comparison case-insensitive
+  // - .includes() checks if the filter text is found anywhere in the string
+  // Example: typing "bit" will match "Bitcoin" or "BTC"
+  const filteredCoins = coins.filter((coin) => {
+    return (
+      coin.name.toLowerCase().includes(filter.toLowerCase()) ||
+      coin.symbol.toLowerCase().includes(filter.toLowerCase())
+    );
+  });
+
   return (
     <>
       <div>
         {/* App title */}
-        <h1>🚀 Crypo Dash</h1>
+        <h1>🚀 Crypto Dash</h1>
+
         {/* Show a loading message while the data is being fetched */}
         {loading && <p>Loading...</p>}
+
         {/* If an error occurs during the fetch, display it to the user */}
         {error && <div className="error">{error}</div>}
 
-        {/*
-        // Render the LimitSelector component
-        // Passing down "limit" (the current number of items to show)
-        // and "setLimit" (the function that updates it)
-        // These are received in the child component as props
-        */}
-        <LimitSelector limit={limit} onLimitChange={setLimit} />
+        {/* --- Top Controls: Filter + Limit --- */}
+        <div className="top-controls">
+          {/* FilterInput: allows the user to type a coin name or symbol */}
+          {/* "filter" stores the current text, and "setFilter" updates it on each keystroke */}
+          <FilterInput filter={filter} onFilterChange={setFilter} />
 
-        {/* Once data is loaded successfully (no loading, no error), display the coin list */}
+          {/* LimitSelector: lets the user choose how many coins to display */}
+          {/* "limit" is the current selected number, and "setLimit" updates it when changed */}
+          <LimitSelector limit={limit} onLimitChange={setLimit} />
+        </div>
+
+        {/* --- Main Content: Coin Grid --- */}
+        {/* Only render the grid when there’s no loading and no error */}
         {!loading && !error && (
           <main className="grid">
-            {/* Loop through the coins array and render one CoinCard per coin */}
-            {/* The "key" helps React identify each card efficiently */}
-            {coins.map((coin) => (
-              <CoinCard key={coin.id} coin={coin} />
-            ))}
+            {/* If there are filtered coins, display them */}
+            {/* If the filter finds nothing, show a message instead */}
+            {filteredCoins.length > 0 ? (
+              filteredCoins.map((coin) => (
+                // Render one CoinCard per coin
+                // "key" helps React efficiently track each card in the list
+                <CoinCard key={coin.id} coin={coin} />
+              ))
+            ) : (
+              // Message shown when no coins match the filter
+              <p>No matching coins</p>
+            )}
           </main>
         )}
       </div>
