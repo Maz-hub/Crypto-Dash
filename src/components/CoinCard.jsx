@@ -32,7 +32,7 @@ const CoinCard = ({ coin }) => {
           }
         >
           {/* Format the 24h price change to show only 2 decimal places (e.g., 3.45%) */}
-          {coin.price_change_percentage_24h.toFixed(2)} %
+          {coin.price_change_percentage_24h} %
         </p>
 
         {/* Market capitalization formatted with commas */}
