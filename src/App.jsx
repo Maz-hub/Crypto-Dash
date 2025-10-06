@@ -10,8 +10,11 @@ import CoinCard from "./components/CoinCard";
 // per_page=10 → limits the results to 10 coins per page
 // page=1 → requests the first page of results
 // sparkline=false → disables mini line charts in the response
-const API_URL =
-  "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false";
+
+// ✅ Load the API base URL from the .env file
+// This value comes from the variable called VITE_API_URL in your .env file
+// Using import.meta.env keeps your code clean and makes the URL easy to change later
+const API_URL = import.meta.env.VITE_API_URL;
 
 const App = () => {
   // List of all coins fetched from the CoinGecko API
@@ -35,7 +38,12 @@ const App = () => {
     const fetchCoins = async () => {
       try {
         // Make a GET request to the API endpoint
-        const res = await fetch(API_URL);
+        // ✅ Fetch request to the CoinGecko API
+        // Here we combine the base URL from the .env file with extra query parameters
+        // (order, per_page, page, sparkline) to control what data we get
+        const res = await fetch(
+          `${API_URL}&order=market_cap_desc&per_page=10&page=1&sparkline=false`
+        );
 
         // If the response is not OK (status not 200–299), throw an error
         if (!res.ok) throw new Error("Failed to fetch data");
