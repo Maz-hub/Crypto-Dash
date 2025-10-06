@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import CoinCard from "./components/CoinCard";
+import LimitSelector from "./components/LimitSelector";
 
 // Base URL of the CoinGecko API endpoint we're using
 // This specific endpoint returns data for multiple coins (prices, market cap, etc.)
@@ -82,20 +83,13 @@ const App = () => {
         {/* If an error occurs during the fetch, display it to the user */}
         {error && <div className="error">{error}</div>}
 
-        <div className="controls">
-          <label htmlFor="limit">Show:</label>
-          <select
-            value={limit}
-            id="limit"
-            onChange={(e) => setLimit(Number(e.target.value))}
-          >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </div>
+        {/*
+        // Render the LimitSelector component
+        // Passing down "limit" (the current number of items to show)
+        // and "setLimit" (the function that updates it)
+        // These are received in the child component as props
+        */}
+        <LimitSelector limit={limit} onLimitChange={setLimit} />
 
         {/* Once data is loaded successfully (no loading, no error), display the coin list */}
         {!loading && !error && (
