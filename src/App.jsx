@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import CoinCard from "./components/CoinCard";
 import LimitSelector from "./components/LimitSelector";
 import FilterInput from "./components/FilterInput";
+import SortSelector from "./components/SortSelector";
 
 // Base URL of the CoinGecko API endpoint we're using
 // This specific endpoint returns data for multiple coins (prices, market cap, etc.)
@@ -43,6 +44,11 @@ const App = () => {
   // "setFilter" updates it whenever the user types in the input box
   const [filter, setFilter] = useState("");
 
+  // Store the current sorting option chosen by the user
+  // Default is 'market_cap_desc' (largest market cap first)
+  // "sortBy" holds the selected value, and "setSortBy" updates it
+  const [sortBy, setSortBy] = useState("market_cap_desc");
+
   // ------------------------ FETCH DATA -------------------------------------------------
 
   // useEffect runs once when the component mounts (empty [] dependency array)
@@ -66,7 +72,7 @@ const App = () => {
         const data = await res.json();
 
         // For now, log the data in the console to inspect the structure
-        console.log(data);
+        // console.log(data);
 
         // Store the data in state so we can render it later
         setCoins(data);
@@ -84,19 +90,53 @@ const App = () => {
     fetchCoins();
   }, [limit]); // ← Empty dependency array = run only once when component mounts
 
-  // ------------------------ FILTER DATA -------------------------------------------------
+  // ------------------------ FILTER + SORT DATA -------------------------------------------------
 
-  // Create a new array that only includes coins matching the user's search
-  // We check if the filter text appears in the coin's name OR symbol
-  // - .toLowerCase() makes the comparison case-insensitive
-  // - .includes() checks if the filter text is found anywhere in the string
-  // Example: typing "bit" will match "Bitcoin" or "BTC"
-  const filteredCoins = coins.filter((coin) => {
-    return (
-      coin.name.toLowerCase().includes(filter.toLowerCase()) ||
-      coin.symbol.toLowerCase().includes(filter.toLowerCase())
-    );
-  });
+  // Start with the full coins array
+  // 1️⃣ FILTER → Keep only the coins that match the search input
+  // 2️⃣ SORT → Then reorder those filtered coins based on the selected sort option
+
+  const filteredCoins = coins
+    // 1️⃣ Filter coins by name or symbol (case-insensitive)
+    .filter((coin) => {
+      return (
+        coin.name.toLowerCase().includes(filter.toLowerCase()) ||
+        coin.symbol.toLowerCase().includes(filter.toLowerCase())
+      );
+    })
+
+    // 2️⃣ Create a shallow copy of the filtered array before sorting
+    // This avoids modifying the original 'coins' array directly
+    .slice()
+
+    // 3️⃣ Sort the filtered coins depending on the user's selected option (sortBy)
+    .sort((a, b) => {
+      switch (sortBy) {
+        // Sort by market cap: highest to lowest
+        case "market_cap_desc":
+          return b.market_cap - a.market_cap;
+
+        // Sort by market cap: lowest to highest
+        case "market_cap_asc":
+          return a.market_cap - b.market_cap;
+
+        // Sort by price: highest to lowest
+        case "price_desc":
+          return b.current_price - a.current_price;
+
+        // Sort by price: lowest to highest
+        case "price_asc":
+          return a.current_price - b.current_price;
+
+        // Sort by 24h price change: biggest gainers first
+        case "change_desc":
+          return b.price_change_percentage_24h - a.price_change_percentage_24h;
+
+        // Sort by 24h price change: biggest losers first
+        case "change_asc":
+          return a.price_change_percentage_24h - b.price_change_percentage_24h;
+      }
+    });
 
   return (
     <>
@@ -119,6 +159,8 @@ const App = () => {
           {/* LimitSelector: lets the user choose how many coins to display */}
           {/* "limit" is the current selected number, and "setLimit" updates it when changed */}
           <LimitSelector limit={limit} onLimitChange={setLimit} />
+
+          <SortSelector sortBy={sortBy} onSortChange={setSortBy} />
         </div>
 
         {/* --- Main Content: Coin Grid --- */}
