@@ -25,35 +25,41 @@ const App = () => {
   // Helps show a user-friendly error instead of breaking the app
   const [error, setError] = useState(null);
 
-// useEffect runs once when the component first mounts
-// (empty dependency array [] means it won't run again unless the component reloads)
-useEffect(() => {
-  // Make a GET request to the CoinGecko API endpoint
-  fetch(API_URL)
-    .then((res) => {
-      // Check if the response is successful (status code 200–299)
-      // If not, throw an error to be caught below
-      if (!res.ok) throw new Error("Failed to fetch data");
-      // Convert the response body from JSON text into a JavaScript object
-      return res.json();
-    })
-    .then((data) => {
-      // Log the data in the console for debugging (optional during development)
-      console.log(data);
-      // Save the fetched coin data into state so it can be displayed
-      setCoins(data);
-      // Set loading to false once data is received
-      setLoading(false);
-    })
-    .catch((err) => {
-      // If anything goes wrong (network error, invalid URL, etc.)
-      // store the error message in state so we can show it to the user
-      setError(err.message);
-      // Stop the loading state since the request has finished (even with an error)
-      setLoading(false);
-    });
-}, []); // ← Empty array = run only once when the component loads
+  // ------------------------ FETCH DATA -------------------------------------------------
 
+  // useEffect runs once when the component mounts (empty [] dependency array)
+  // This is where we fetch live data from the CoinGecko API
+  useEffect(() => {
+    // Define an async function because useEffect itself can't be async
+    const fetchCoins = async () => {
+      try {
+        // Make a GET request to the API endpoint
+        const res = await fetch(API_URL);
+
+        // If the response is not OK (status not 200–299), throw an error
+        if (!res.ok) throw new Error("Failed to fetch data");
+
+        // Convert the response into a JavaScript object
+        const data = await res.json();
+
+        // For now, log the data in the console to inspect the structure
+        console.log(data);
+
+        // Store the data in state so we can render it later
+        setCoins(data);
+      } catch (err) {
+        // If any error happens (e.g., network issue, wrong URL),
+        // save the message to state so it can be shown in the UI
+        setError(err.message);
+      } finally {
+        // Whether success or error, stop showing the loading spinner
+        setLoading(false);
+      }
+    };
+
+    // Call the async function
+    fetchCoins();
+  }, []); // ← Empty dependency array = run only once when component mounts
 
   return (
     <>
