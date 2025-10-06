@@ -29,6 +29,8 @@ const App = () => {
   // Helps show a user-friendly error instead of breaking the app
   const [error, setError] = useState(null);
 
+  const [limit, setLimit] = useState(10);
+
   // ------------------------ FETCH DATA -------------------------------------------------
 
   // useEffect runs once when the component mounts (empty [] dependency array)
@@ -42,7 +44,7 @@ const App = () => {
         // Here we combine the base URL from the .env file with extra query parameters
         // (order, per_page, page, sparkline) to control what data we get
         const res = await fetch(
-          `${API_URL}&order=market_cap_desc&per_page=10&page=1&sparkline=false`
+          `${API_URL}&order=market_cap_desc&per_page=${limit}&page=1&sparkline=false`
         );
 
         // If the response is not OK (status not 200–299), throw an error
@@ -68,7 +70,7 @@ const App = () => {
 
     // Call the async function
     fetchCoins();
-  }, []); // ← Empty dependency array = run only once when component mounts
+  }, [limit]); // ← Empty dependency array = run only once when component mounts
 
   return (
     <>
@@ -79,6 +81,21 @@ const App = () => {
         {loading && <p>Loading...</p>}
         {/* If an error occurs during the fetch, display it to the user */}
         {error && <div className="error">{error}</div>}
+
+        <div className="controls">
+          <label htmlFor="limit">Show:</label>
+          <select
+            value={limit}
+            id="limit"
+            onChange={(e) => setLimit(Number(e.target.value))}
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
 
         {/* Once data is loaded successfully (no loading, no error), display the coin list */}
         {!loading && !error && (
