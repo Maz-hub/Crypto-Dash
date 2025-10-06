@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import CoinCard from "./components/CoinCard";
 
 // Base URL of the CoinGecko API endpoint we're using
 // This specific endpoint returns data for multiple coins (prices, market cap, etc.)
@@ -64,7 +65,23 @@ const App = () => {
   return (
     <>
       <div>
+        {/* App title */}
         <h1>🚀 Crypo Dash</h1>
+        {/* Show a loading message while the data is being fetched */}
+        {loading && <p>Loading...</p>}
+        {/* If an error occurs during the fetch, display it to the user */}
+        {error && <div className="error">{error}</div>}
+
+        {/* Once data is loaded successfully (no loading, no error), display the coin list */}
+        {!loading && !error && (
+          <main className="grid">
+            {/* Loop through the coins array and render one CoinCard per coin */}
+            {/* The "key" helps React identify each card efficiently */}
+            {coins.map((coin) => (
+              <CoinCard key={coin.id} coin={coin} />
+            ))}
+          </main>
+        )}
       </div>
     </>
   );
