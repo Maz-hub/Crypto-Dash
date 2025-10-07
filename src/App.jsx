@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import HomePage from "./pages/home";
 import { Routes, Route } from "react-router";
+import HomePage from "./pages/home";
+import AboutPage from "./pages/about";
 
 // Base URL of the CoinGecko API endpoint we're using
 // This specific endpoint returns data for multiple coins (prices, market cap, etc.)
@@ -90,17 +91,23 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path ='/' element={<HomePage
-      coins={coins}
-      filter={filter}
-      setFilter={setFilter}
-      limit={limit}
-      setLimit={setLimit}
-      sortBy={sortBy}
-      setSortBy={setSortBy}
-      loading={loading}
-      error={error}
-      />} />
+      <Route
+        path="/"
+        element={
+          <HomePage
+            coins={coins}
+            filter={filter}
+            setFilter={setFilter}
+            limit={limit}
+            setLimit={setLimit}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            loading={loading}
+            error={error}
+          />
+        }
+      />
+      <Route path="about" element={<AboutPage />}></Route>
     </Routes>
   );
 };
