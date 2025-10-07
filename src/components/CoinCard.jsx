@@ -1,9 +1,10 @@
 // Displays the information for a single cryptocurrency
 // Receives the "coin" object as a prop from the parent component (App.jsx)
+import { Link } from "react-router";
 
 const CoinCard = ({ coin }) => {
   return (
-    <>
+    <Link to={`/coin/${coin.id}`}>
       {/* Each card shows a coin's image, name, symbol, price, and market data */}
       <div className="coin-card">
         {/* Header section: coin image + basic info */}
@@ -38,7 +39,7 @@ const CoinCard = ({ coin }) => {
         {/* Market capitalization formatted with commas */}
         <p>Market Cap: {coin.market_cap.toLocaleString()}</p>
       </div>
-    </>
+    </Link>
   );
 };
 

@@ -5,11 +5,8 @@ import SortSelector from "../components/SortSelector";
 
 const HomePage = ({
   coins,
-  setCoins,
   loading,
-  setLoading,
   error,
-  setError,
   limit,
   setLimit,
   filter,
