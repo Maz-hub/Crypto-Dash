@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router";
 import HomePage from "./pages/home";
 import AboutPage from "./pages/about";
 import Header from "./components/Header";
+import NotFoundPage from "./pages/not-found";
 
 // Base URL of the CoinGecko API endpoint we're using
 // This specific endpoint returns data for multiple coins (prices, market cap, etc.)
@@ -92,7 +93,7 @@ const App = () => {
 
   return (
     <>
-    <Header />
+      <Header />
       <Routes>
         <Route
           path="/"
@@ -110,7 +111,8 @@ const App = () => {
             />
           }
         />
-        <Route path="about" element={<AboutPage />}></Route>
+        <Route path="about" element={<AboutPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );
