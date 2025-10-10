@@ -7,6 +7,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router"; // React Router hook for reading the coin ID from the URL
 import { Link } from "react-router"; // Used to navigate back to the home page
+import Spinner from "../components/Spinner";
 
 // Base URL for the single-coin endpoint, stored in the .env file
 const API_URL = import.meta.env.VITE_COIN_API_URL;
@@ -65,7 +66,9 @@ const CoinDetailsPage = () => {
       </h1>
 
       {/* Conditional messages for loading and error states */}
-      {loading && <p>Loading...</p>}
+      {/* When the data is still being fetched, show the Spinner component instead of plain text
+       */}
+      {loading && <Spinner />}
       {error && <div className="error">❌ {error}</div>}
 
       {/* Show the detailed data only when loading and error are resolved */}

@@ -2,6 +2,7 @@ import CoinCard from "../components/CoinCard";
 import LimitSelector from "../components/LimitSelector";
 import FilterInput from "../components/FilterInput";
 import SortSelector from "../components/SortSelector";
+import Spinner from "../components/Spinner";
 
 const HomePage = ({
   coins,
@@ -66,8 +67,9 @@ const HomePage = ({
       {/* App title */}
       <h1>🚀 Crypto Dash</h1>
 
-      {/* Show a loading message while the data is being fetched */}
-      {loading && <p>Loading...</p>}
+      {/* Show the Spinner component while data is being fetched
+    This replaces the plain "Loading..." text with a visual loading animation */}
+      {loading && <Spinner color="white" />}
 
       {/* If an error occurs during the fetch, display it to the user */}
       {error && <div className="error">{error}</div>}
