@@ -90,12 +90,19 @@ const App = () => {
 
     // Call the async function
     fetchCoins();
-  }, [limit]); // ← Empty dependency array = run only once when component mounts
+  }, [limit]); // ← dependency array = Runs when the component mounts and whenever "limit" changes
 
   return (
     <>
+      {/* Header component shown on every page (navigation, title, etc.) */}
       <Header />
+
+      {/* React Router configuration for different app pages */}
       <Routes>
+        {/* Home page route
+          - Displays the main crypto dashboard
+          - Passes down all required props: coin data, filter, limit, sort, loading, and error
+          - HomePage uses these to render the coin grid and control components */}
         <Route
           path="/"
           element={
@@ -112,8 +119,17 @@ const App = () => {
             />
           }
         />
+
+        {/* About page route (static information about the project) */}
         <Route path="about" element={<AboutPage />} />
+
+        {/* Dynamic route for individual coin details
+          - ":id" is a URL parameter (e.g., /coin/bitcoin)
+          - CoinDetailsPage uses useParams() to fetch and display that coin’s details */}
         <Route path="/coin/:id" element={<CoinDetailsPage />} />
+
+        {/* Catch-all route for any undefined paths
+          - Renders a simple 404 Not Found page */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
