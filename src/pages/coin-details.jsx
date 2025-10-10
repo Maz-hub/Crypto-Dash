@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router"; // React Router hook for reading the coin ID from the URL
 import { Link } from "react-router"; // Used to navigate back to the home page
 import Spinner from "../components/Spinner";
+import CoinChart from "../components/CoinChart";
 
 // Base URL for the single-coin endpoint, stored in the .env file
 const API_URL = import.meta.env.VITE_COIN_API_URL;
@@ -123,6 +124,9 @@ const CoinDetailsPage = () => {
               Last Updated: {new Date(coin.last_updated).toLocaleDateString()}
             </h4>
           </div>
+
+          {/* --------------- COIN CHART --------------- */}
+          <CoinChart coinId={coin.id} />
 
           {/* --------------- LINKS SECTION --------------- */}
           <div className="coin-details_links">
