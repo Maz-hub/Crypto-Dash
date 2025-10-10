@@ -89,13 +89,51 @@ const CoinChart = ({ coinId }) => {
     fetchPrices();
   }, [coinId]); // Re-run if a new coinId is passed in (user navigates to another coin)
 
+  if (loading) return <p>Loading Chart...</p>;
+
   // ------------------------ RENDER UI ------------------------
   return (
-    <>
-      {/* Later, replace "Chart" with the actual Line component */}
-      {/* Example: <Line data={chartData} options={options} /> */}
-      <>Chart</>
-    </>
+    // Add some spacing above the chart for layout
+    <div style={{ marginTop: "30px" }}>
+      {/* Only render the Line chart once chartData is loaded */}
+      {chartData && (
+        <Line
+          data={chartData} // The formatted price data for Chart.js
+          options={{
+            responsive: true, // Chart resizes automatically with the window
+
+            // Plugin settings (legend + tooltip)
+            plugins: {
+              legend: { display: false }, // Hide legend (we only have one dataset)
+              tooltip: {
+                mode: "index", // Show tooltip values for all points at same x-position
+                intersect: false, // Allow tooltip to trigger without directly hovering the line
+              },
+            },
+
+            // Scale settings for X (time) and Y (price)
+            scales: {
+              x: {
+                type: "time", // Use time scale for the X-axis
+                time: {
+                  unit: "day", // Show daily intervals on the axis
+                },
+                ticks: {
+                  autoSkip: true, // Avoid overlapping tick labels
+                  maxTicksLimit: 7, // Limit number of visible ticks
+                },
+              },
+              y: {
+                ticks: {
+                  // Format tick labels to show as currency
+                  callback: (value) => `$${value.toLocaleString()}`,
+                },
+              },
+            },
+          }}
+        />
+      )}
+    </div>
   );
 };
 
